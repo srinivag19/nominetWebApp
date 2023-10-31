@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/nominet-web-app",
+            "outputPath": "dist/nominetWebApp",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": [
@@ -30,7 +30,10 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss"
+              "@angular/material/prebuilt-themes/indigo-pink.css",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "src/styles.scss",
+              "node_modules/ngx-toastr/toastr.css"
             ],
             "scripts": []
           },
@@ -93,6 +96,7 @@
               "src/assets"
             ],
             "styles": [
+              "@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.scss"
             ],
             "scripts": []
@@ -100,5 +104,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "1d69ccfd-acf5-4cf6-bb4c-c95bb921b0b1"
   }
 }

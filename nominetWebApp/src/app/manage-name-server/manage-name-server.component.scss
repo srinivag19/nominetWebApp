@@ -1,0 +1,34 @@
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1em 0;
+    border: 1px solid #ddd; /* Add a border around the entire table */
+  }
+  
+  .styled-table th, .styled-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-right: 1px solid #ddd; /* Add a border on the right side of each cell */
+  }
+  
+  .styled-table thead {
+    background-color: #777474c7;
+    color: #fff;
+  }
+  
+  .styled-table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  .styled-table tbody tr:hover {
+    background-color: #f5f376;
+  }
+  
+  /* Remove the right border for the last cell in each row */
+  .styled-table tbody tr td:last-child {
+    border-right: none;
+  }
+
+  .blue-text {
+    color: blue;
+  }
