@@ -44,12 +44,19 @@ export class NameServerInputCommonsComponent {
           return;
         }
         
-        var rgx = /^[0-9]*\.?[0-9]*$/; 
-        const validateIP = splitDomainIp[1].match(rgx);
-        console.log("val",validateIP);
+        const isValidIp = /^(?:(?:^|\.)(?:2(?:5[0-5]|[0-4]\d)|1?\d?\d)){4}$/; 
+        const isValidDns=/^[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,6}$/i;
+        
+        if(!isValidDns.test(splitDomainIp[0])){
+          this.toastrService.error('DNS address format is invalid. Please check ' +splitDomainIp[0], 'Input Format Error');
+          return;
+        }else if(!isValidIp.test(splitDomainIp[1].trim())){
+          this.toastrService.error('IP address format is invalid. Please check ' +splitDomainIp[1], 'Input Format Error');
+          return;
+        }
         if(this.nameServers.length == 0 || this.nameServers.some(list => list.ip != splitDomainIp[1] || list.name != splitDomainIp[0])) {
           const obj = {
-            id: Math.random().toString(4),
+            id: Math.random().toString(16),
             name: splitDomainIp[0],
             ip: splitDomainIp[1],
           };
