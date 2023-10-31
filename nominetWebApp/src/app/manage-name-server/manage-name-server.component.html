@@ -1,1 +1,29 @@
-<p>manage-name-server works!</p>
+<h3 class="mb-3 blue-text">Nameservers</h3>
+<p> From here you can add and remove nameservers of this domain. When you have finished click Save.</p>
+<p> Note: you cannot edit any of the details of a nameserver here, this must be done using Nameserver
+    edit</p>
+
+<table class="styled-table">
+    <thead>
+        <tr>
+            <th>Host Name</th>
+            <th>IP</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let server of nameServers">
+            <td>{{ server.name }}</td>
+            <td>{{ server.ip }}</td>
+            <td>
+                <button (click)="deleteNameServer(server.id)">Delete</button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
+<h5 class="mb-3 blue-text">Add Name Server</h5>
+<p> Add single or multiple nameservers here. Please add each entry on a seprate line. For .uk domains,
+    you can have a maximum of 10 namerserver records per domain.</p>
+<p>nhs1.test.uk: 123.123.123.123</p>

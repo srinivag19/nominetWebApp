@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 export class NameServer {
     "id": string;
@@ -12,6 +13,13 @@ export class NameServer {
 export class AppService {
 
     private nameServers: NameServer[] = [];
+
+    public registeredNameServer: any = new BehaviorSubject([]);
+
+    getAllNameServers() {
+        this.registeredNameServer.next(this.nameServers);
+
+    }
 
 
     deleteNameServer(id: string): void {
