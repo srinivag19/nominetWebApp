@@ -14,7 +14,7 @@ export class NameServerInputCommonsComponent {
   contactForm: FormGroup;
   formGroup: any;
   disableAddButton: boolean = false;
-  ipValidator: string = '/^(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/';
+  
 
   constructor(private nameServerService: AppService, private toastrService: ToastrService) {
     this.contactForm = new FormGroup({
@@ -37,7 +37,7 @@ export class NameServerInputCommonsComponent {
     let splitList = this.contactForm.get('message')?.value.split('\n');
     splitList.forEach((item: string) => {
       if (item.trim()) {
-        //this.disableAddButton=false;
+        
         let splitDomainIp = item.split(':');
         if(splitDomainIp?.length==0 || splitDomainIp?.length==1){
           this.toastrService.error(': is missing between Nameserver and its IP address. Please use format example "ns1.test.uk: 123.123.123.123"', 'Input Format Error');
