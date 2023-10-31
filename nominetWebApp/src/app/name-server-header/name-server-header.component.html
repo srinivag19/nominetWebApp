@@ -1,1 +1,25 @@
-<p>name-server-header works!</p>
+<div class="row justify-content-start bg-light my-2">
+    <div class="col-7">
+        <nav aria-label="breadcrumb" class="small">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#">Domain</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Info</li>
+                <li class="breadcrumb-item active" aria-current="page">update</li>
+            </ol>
+        </nav>
+        <h2 class="mb-3 blue-text">Editing {{ domainInfo[0].domain }}</h2>
+        <ul class="list-inline">
+            <li class="list-inline-item"><a href="#">Contacts</a></li>
+            <li class="list-inline-item"><a href="#">Nameservers</a></li>
+            <li class="list-inline-item"><a href="#">DS Records</a></li>
+            <li class="list-inline-item"><a href="#">Notes</a></li>
+        </ul>
+    </div>
+    &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
+    <div class="col-4 small">
+        <ul class="list-inline">
+            <li class="list-inline-item">Register Operator <br> <a href="#">Nominet</a></li>&nbsp;&nbsp;
+            <li class="list-inline-item">Register <br> {{domainInfo[0].registrar}}</li>
+        </ul>
+    </div>
+</div>

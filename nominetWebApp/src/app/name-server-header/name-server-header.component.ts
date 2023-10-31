@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AppService } from '../app.service';
 
 @Component({
   selector: 'app-name-server-header',
@@ -6,5 +7,15 @@ import { Component } from '@angular/core';
   styleUrls: ['./name-server-header.component.scss']
 })
 export class NameServerHeaderComponent {
+
+  domainInfo!: any[];
+
+  constructor(private nameServerService: AppService) { }
+
+  ngOnInit(): void {
+
+    this.domainInfo = this.nameServerService.getDomainInfo();
+  }
+
 
 }
