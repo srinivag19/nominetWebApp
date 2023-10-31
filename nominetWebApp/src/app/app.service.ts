@@ -10,7 +10,7 @@ export class NameServer {
     providedIn: 'root',
 })
 export class AppService {
-    
+
     private nameServers: NameServer[] = [];
 
 
