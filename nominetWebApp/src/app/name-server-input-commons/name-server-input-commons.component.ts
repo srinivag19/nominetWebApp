@@ -39,7 +39,7 @@ export class NameServerInputCommonsComponent {
       if (item.trim()) {
         
         let splitDomainIp = item.split(':');
-        if(splitDomainIp?.length==0 || splitDomainIp?.length==1){
+        if(splitDomainIp?.length<2){
           this.toastrService.error(': is missing between Nameserver and its IP address. Please use format example "ns1.test.uk: 123.123.123.123"', 'Input Format Error');
           return;
         }
@@ -67,6 +67,8 @@ export class NameServerInputCommonsComponent {
           this.toastrService.error('Duplicate Nameservers found in your input. Please check. ' +item, 'Error');
         }
         
+      }else{
+        this.toastrService.info('Nameserver cannot be empty ', 'Info');
       }
     });
   }
