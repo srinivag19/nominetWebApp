@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
+import { BehaviorSubject, Observable, Subject, of } from 'rxjs';
 
 export class NameServer {
     "id": string;
@@ -19,6 +20,11 @@ export class AppService {
     getAllNameServers() {
         this.registeredNameServer.next(this.nameServers);
 
+    }
+
+    addNameServers(nameServer: NameServer) : Observable<NameServer>{
+        
+        return of(nameServer);
     }
 
 

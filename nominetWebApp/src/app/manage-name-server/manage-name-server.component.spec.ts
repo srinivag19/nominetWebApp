@@ -36,7 +36,7 @@ describe('ManageNameServerComponent', () => {
       { id: '0.e482173f908b7', name: 'ns1.test.uk', ip: '123.123.123.123' },
     ];
     appService.registeredNameServer.next(sampleNameServer);
-    console.log(component.nameServers);
+    //console.log(component.nameServers);
     appService.registeredNameServer.subscribe((item: NameServer[]) => {
       fixture.detectChanges();
       component.nameServers = item;
@@ -50,15 +50,33 @@ describe('ManageNameServerComponent', () => {
 
   it('should delete a name server', () => {
     const sampleNameServer = [
-      { id: '0.e482173f908b7', name: 'ns1.test.uk', ip: '123.123.123.123' },
+      { id: '0.e482173f908b7', name: 'ns1.test.uk', ip: '123.123.123.123' }
     ];
     appService.registeredNameServer.next(sampleNameServer);
     appService.registeredNameServer.subscribe((item: NameServer[]) => {
       fixture.detectChanges();
       component.nameServers = item;
       if (component.nameServers.length) {
+
+        console.log("ip", component.nameServers.length);
+        console.log("length", component.nameServers[0].ip);
+        expect(component.nameServers.length).toBe(1);
+        expect(component.nameServers[0].ip).toBe('123.123.123.123');
         component.deleteNameServer(component.nameServers[0]?.id);
+
+        updateNameServers();
+
       }
     });
+
+
   });
+  function updateNameServers() {
+    appService.registeredNameServer.subscribe((item: NameServer[]) => {
+      fixture.detectChanges();
+      component.nameServers = item;
+      console.log("item", item);
+      expect(component.nameServers.length).toBe(0);
+    });
+  }
 });
