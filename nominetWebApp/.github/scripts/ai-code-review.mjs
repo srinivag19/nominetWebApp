@@ -298,7 +298,10 @@ async function askOpenAi(messages) {
 
   if (!response.ok) {
     const body = await response.text();
-    throw new Error(`OpenAI API ${response.status} ${response.statusText}: ${body}`);
+    const error = new Error(`OpenAI API ${response.status} ${response.statusText}: ${body}`);
+    error.status = response.status;
+    error.responseBody = body;
+    throw error;
   }
 
   const payload = await response.json();
@@ -381,7 +384,30 @@ const guidelinesPath = new URL("../ai-review-guidelines.md", import.meta.url);
 const guidelines = await fs.readFile(guidelinesPath, "utf8");
 const selectedFiles = trimPatch(reviewableFiles);
 const retrievedGuidelines = retrieveGuidelines(guidelines, selectedFiles);
-const review = await askOpenAi(buildPrompt({ guidelines: retrievedGuidelines, files: selectedFiles }));
+
+let review;
+
+try {
+  review = await askOpenAi(buildPrompt({ guidelines: retrievedGuidelines, files: selectedFiles }));
+} catch (error) {
+  const isQuotaError =
+    error.status === 429 &&
+    typeof error.responseBody === "string" &&
+    error.responseBody.includes("insufficient_quota");
+
+  if (isQuotaError) {
+    await postReview({
+      summary:
+        "AI review could not run because the configured OpenAI API key has no available quota or billing credit. Please check the OpenAI account billing/quota for `OPENAI_API_KEY`, then re-run this workflow.",
+      comments: [],
+    });
+    console.log("OpenAI quota is unavailable. Posted a PR comment and skipped AI review.");
+    process.exit(0);
+  }
+
+  throw error;
+}
+
 const comments = filterValidComments(review, selectedFiles);
 
 await postReview({
