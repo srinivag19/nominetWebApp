@@ -30,7 +30,7 @@ export class AppService {
 
     deleteNameServer(id: string): void {
         const serverIndex = this.nameServers.findIndex(
-            (server) => server.id === id
+            (server) => server.id !== id
         );
         if (serverIndex !== -1) {
             this.nameServers.splice(serverIndex, 1);
