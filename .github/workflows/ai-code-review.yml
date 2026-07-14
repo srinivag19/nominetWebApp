@@ -1,14 +1,17 @@
 ﻿name: AI Code Review
 
+# Start a review when a pull request is ready or receives new changes.
 on:
   pull_request_target:
     types: [opened, synchronize, reopened, ready_for_review]
 
+# Allow the workflow to read code and publish review comments.
 permissions:
   contents: read
   pull-requests: write
   issues: write
 
+# Cancel an older run when newer changes are pushed to the same pull request.
 concurrency:
   group: ai-code-review-${{ github.event.pull_request.number }}
   cancel-in-progress: true
@@ -20,16 +23,19 @@ jobs:
     if: github.event.pull_request.draft == false
 
     steps:
+      # Use the trusted base branch because this workflow can access repository secrets.
       - name: Check out base branch
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.base.ref }}
 
+      # Install the Node.js version used to run the review script.
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
+      # Pass credentials and review limits to the script, then run the AI review.
       - name: Run AI code review
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

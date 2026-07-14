@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 
+// Set safe limits for how much code the AI reviews in one run.
 const MAX_FILES = Number(process.env.REVIEW_MAX_FILES ?? 25);
 const MAX_PATCH_CHARS = Number(process.env.REVIEW_MAX_PATCH_CHARS ?? 60000);
 const MAX_COMMENTS = Number(process.env.REVIEW_MAX_COMMENTS ?? 12);
@@ -12,6 +13,7 @@ const openAiKey = process.env.OPENAI_API_KEY;
 const repository = process.env.GITHUB_REPOSITORY;
 const eventPath = process.env.GITHUB_EVENT_PATH;
 
+// Stop early when the workflow has not supplied the details needed for a review.
 if (!githubToken) {
   throw new Error("GITHUB_TOKEN is required.");
 }
@@ -27,6 +29,7 @@ if (!repository || !eventPath) {
 const event = JSON.parse(await fs.readFile(eventPath, "utf8"));
 const pullRequest = event.pull_request;
 
+// Only review completed pull requests; ignore other events and draft work.
 if (!pullRequest) {
   console.log("No pull_request payload found. Nothing to review.");
   process.exit(0);
@@ -42,6 +45,7 @@ const prNumber = pullRequest.number;
 const commitId = pullRequest.head.sha;
 const apiBase = "https://api.github.com";
 
+// Review source and documentation files, but skip generated, dependency, and binary files.
 const reviewableExtensions = new Set([
   ".ts",
   ".html",
@@ -65,6 +69,7 @@ const ignoredPathPatterns = [
   /\.(png|jpe?g|gif|ico|svg|webp|pdf|zip)$/i,
 ];
 
+// Send an authenticated request to GitHub and return its JSON response.
 async function github(pathname, options = {}) {
   const response = await fetch(`${apiBase}${pathname}`, {
     ...options,
@@ -89,6 +94,7 @@ async function github(pathname, options = {}) {
   return response.json();
 }
 
+// Load every changed file in the pull request, one API page at a time.
 async function getPullRequestFiles() {
   const files = [];
   let page = 1;
@@ -121,6 +127,7 @@ function shouldReviewFile(file) {
   return reviewableExtensions.has(path.extname(file.filename).toLowerCase());
 }
 
+// Read a Git patch and record the new-file line numbers that were changed.
 function parseChangedLines(patch) {
   const changed = new Set();
   let newLine = 0;
@@ -150,6 +157,7 @@ function parseChangedLines(patch) {
   return changed;
 }
 
+// Keep the review input within the configured file and text limits.
 function trimPatch(files) {
   let remaining = MAX_PATCH_CHARS;
   const selected = [];
@@ -174,6 +182,7 @@ function trimPatch(files) {
   return selected;
 }
 
+// Pick the guideline sections that best match the types of files being reviewed.
 function retrieveGuidelines(guidelines, files) {
   const lowerNames = files.map((file) => file.filename.toLowerCase()).join(" ");
   const sections = guidelines.split(/\n(?=## )/);
@@ -201,6 +210,7 @@ function retrieveGuidelines(guidelines, files) {
     .join("\n\n");
 }
 
+// Tell the AI what to review and include the selected code changes and guidelines.
 function buildPrompt({ guidelines, files }) {
   return [
     {
@@ -235,6 +245,7 @@ function buildPrompt({ guidelines, files }) {
   ];
 }
 
+// Ask OpenAI for a structured review containing a summary and inline comments.
 async function askOpenAi(messages) {
   const schema = {
     name: "pull_request_review",
@@ -305,6 +316,7 @@ async function askOpenAi(messages) {
   return JSON.parse(payload.choices[0].message.content);
 }
 
+// Keep only unique comments that point to lines changed by this pull request.
 function filterValidComments(review, files) {
   const changedLinesByFile = new Map(
     files.map((file) => [file.filename, parseChangedLines(file.patch)]),
@@ -333,6 +345,7 @@ function filterValidComments(review, files) {
   return comments.slice(0, MAX_COMMENTS);
 }
 
+// Publish the result as a pull-request review, or as a summary when there are no findings.
 async function postReview({ summary, comments }) {
   const body = `${MARKER}
 AI code review completed.
@@ -366,6 +379,7 @@ ${summary}`;
   });
 }
 
+// Run the full review: collect changes, select guidance, ask the AI, and post the result.
 const allFiles = await getPullRequestFiles();
 const reviewableFiles = allFiles.filter(shouldReviewFile);
 
